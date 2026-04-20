@@ -1,128 +1,143 @@
 #include <iostream>
-#include <string>
 #include <vector>
 #include <iomanip>
 using namespace std;
 
-// 功能1：学生信息结构体
+// 学生结构体
 struct Student {
     int id;
     string name;
     int score;
 };
 
-vector<Student> stuList;
+// 函数声明（提前告诉编译器有这些函数）
+void showMenu();
+void addStudent(vector<Student>& students);
+void showAllStudents(const vector<Student>& students);
+void searchById(const vector<Student>& students);
+void showAverage(const vector<Student>& students);
 
-// 功能1：添加学生信息
-void addStudent() {
-    cout << "\n====== 功能1：添加学生信息 ======" << endl;
+int main() {
+    // 学生列表（放在main里，更规范）
+    vector<Student> students;
+    int choice;
+
+    while (true) {
+        showMenu();
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                addStudent(students);
+                break;
+            case 2:
+                showAllStudents(students);
+                break;
+            case 3:
+                searchById(students);
+                break;
+            case 4:
+                showAverage(students);
+                break;
+            case 0:
+                cout << "程序已退出~" << endl;
+                return 0;
+            default:
+                cout << "输入无效，请重新选择！" << endl;
+        }
+
+        system("pause");
+    }
+}
+
+// 显示菜单
+void showMenu() {
+    system("cls");  // 清屏，界面更干净
+    cout << "\n====== 学生成绩管理系统 ======" << endl;
+    cout << "1. 添加学生信息" << endl;
+    cout << "2. 显示所有学生" << endl;
+    cout << "3. 按学号查询学生" << endl;
+    cout << "4. 计算平均分" << endl;
+    cout << "0. 退出系统" << endl;
+    cout << "================================" << endl;
+    cout << "请输入选项：";
+}
+
+// 添加学生
+void addStudent(vector<Student>& students) {
     Student s;
-    cout << "请输入学号：";
+    cout << "\n→ 添加学生" << endl;
+    cout << "学号：";
     cin >> s.id;
-    cout << "请输入姓名：";
+    cout << "姓名：";
     cin >> s.name;
-    cout << "请输入成绩：";
+    cout << "成绩：";
     cin >> s.score;
-    stuList.push_back(s);
+
+    students.push_back(s);
     cout << "✅ 添加成功！" << endl;
 }
 
-// 功能2：显示所有学生信息
-void showStudents() {
-    cout << "\n====== 功能2：显示所有学生 ======" << endl;
-    if (stuList.empty()) {
-        cout << "暂无学生信息！" << endl;
+// 显示所有学生
+void showAllStudents(const vector<Student>& students) {
+    cout << "\n→ 所有学生信息" << endl;
+    if (students.empty()) {
+        cout << "暂无学生记录" << endl;
         return;
     }
-    cout << left << setw(10) << "学号" 
+
+    // 左对齐 + 宽度设置
+    cout << left;
+    cout << setw(10) << "学号" 
          << setw(15) << "姓名" 
-         << setw(10) << "成绩" << endl;
-    cout << "-----------------------------------------" << endl;
-    for (auto &s : stuList) {
-        cout << left << setw(10) << s.id
+         << setw(8) << "成绩" << endl;
+    cout << "----------------------------------" << endl;
+
+    for (const auto& s : students) {
+        cout << setw(10) << s.id
              << setw(15) << s.name
-             << setw(10) << s.score << endl;
+             << setw(8) << s.score << endl;
     }
 }
 
-// 功能3：按学号查询学生
-void searchStudent() {
-    cout << "\n====== 功能3：查询学生 ======" << endl;
-    int searchId;
-    cout << "请输入要查询的学号：";
-    cin >> searchId;
+// 按学号查找
+void searchById(const vector<Student>& students) {
+    int id;
+    cout << "\n→ 查询学生" << endl;
+    cout << "请输入学号：";
+    cin >> id;
+
     bool found = false;
-    for (auto &s : stuList) {
-        if (s.id == searchId) {
+    for (const auto& s : students) {
+        if (s.id == id) {
             cout << "找到学生：" << endl;
-            cout << "学号：" << s.id << endl;
             cout << "姓名：" << s.name << endl;
             cout << "成绩：" << s.score << endl;
             found = true;
             break;
         }
     }
+
     if (!found) {
-        cout << "❌ 未找到该学生！" << endl;
+        cout << "❌ 未找到该学生" << endl;
     }
 }
 
-// 功能4：统计平均分
-void calculateAvg() {
-    cout << "\n====== 功能4：计算平均分 ======" << endl;
-    if (stuList.empty()) {
-        cout << "暂无学生数据！" << endl;
+// 计算平均分
+void showAverage(const vector<Student>& students) {
+    if (students.empty()) {
+        cout << "\n暂无学生数据" << endl;
         return;
     }
-    int sum = 0;
-    for (auto &s : stuList) {
-        sum += s.score;
+
+    int total = 0;
+    for (const auto& s : students) {
+        total += s.score;
     }
-    double avg = sum * 1.0 / stuList.size();
-    cout << "总人数：" << stuList.size() << endl;
-    cout << "总分：" << sum << endl;
+
+    double avg = (double)total / students.size();
+    cout << "\n→ 成绩统计" << endl;
+    cout << "总人数：" << students.size() << endl;
+    cout << "总分：" << total << endl;
     cout << "平均分：" << fixed << setprecision(2) << avg << endl;
-}
-
-// 菜单
-void showMenu() {
-    cout << "\n================================" << endl;
-    cout << "       学生成绩管理系统         " << endl;
-    cout << "================================" << endl;
-    cout << "1. 添加学生信息" << endl;
-    cout << "2. 显示所有学生" << endl;
-    cout << "3. 按学号查询学生" << endl;
-    cout << "4. 计算学生平均分" << endl;
-    cout << "0. 退出系统" << endl;
-    cout << "================================" << endl;
-    cout << "请输入功能编号：";
-}
-
-int main() {
-    int choice;
-    while (true) {
-        showMenu();
-        cin >> choice;
-        switch (choice) {
-            case 1:
-                addStudent();
-                break;
-            case 2:
-                showStudents();
-                break;
-            case 3:
-                searchStudent();
-                break;
-            case 4:
-                calculateAvg();
-                break;
-            case 0:
-                cout << "感谢使用，再见！" << endl;
-                return 0;
-            default:
-                cout << "输入错误，请重新输入！" << endl;
-        }
-        system("pause");
-    }
-    return 0;
 }
